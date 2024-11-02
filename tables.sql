@@ -1,7 +1,3 @@
--- Create database
-CREATE DATABASE ecommerce;
-USE ecommerce;
-
 -- Create Products table
 CREATE TABLE Products (
     product_id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,7 +18,7 @@ CREATE TABLE Orders (
     product_id INT,
     order_quantity INT NOT NULL,
     order_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (product_id) REFERENCES Products(product_id)
+    FOREIGN KEY (product_id) REFERENCES Products(product_id) ON DELETE CASCADE
 );
 
 -- Create Order Logs table for order tracking with foreign key reference to Orders

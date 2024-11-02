@@ -49,6 +49,20 @@ function addProduct($conn, $product_name, $price, $stock_quantity)
     $stmt->close();
 }
 
+// Function to delete a product
+function deleteProduct($conn, $product_id)
+{
+    $stmt = $conn->prepare("DELETE FROM Products WHERE product_id = ?");
+    $stmt->bind_param("i", $product_id);
+
+    if ($stmt->execute()) {
+        echo "<p style='color:green;'>Product ID $product_id deleted successfully!</p>";
+    } else {
+        echo "<p style='color:red;'>Failed to delete product. Product ID $product_id may not exist.</p>";
+    }
+    $stmt->close();
+}
+
 // Handle form submissions
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['order'])) {
@@ -62,12 +76,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $price = doubleval($_POST['price']);
         $stock_quantity = intval($_POST['stock_quantity']);
         addProduct($conn, $product_name, $price, $stock_quantity);
+    } elseif (isset($_POST['delete_product'])) {
+        // Delete product form submission
+        $product_id = intval($_POST['product_id']);
+        deleteProduct($conn, $product_id);
     }
     // Redirect to the same page to prevent form resubmission
-    header("Location: " . $_SERVER['PHP_SELF']);
-    exit;
+    // header("Location: " . $_SERVER['PHP_SELF']);
+    // exit;
 }
-
 
 // Fetch all products to display in a table
 $products_result = $conn->query("SELECT * FROM Products");
@@ -194,6 +211,17 @@ $products_result = $conn->query("SELECT * FROM Products");
                 <input type="number" id="stock_quantity" name="stock_quantity" required>
 
                 <button type="submit" name="add_product">Add Product</button>
+            </form>
+        </div>
+
+        <!-- Delete Product Form -->
+        <div class="form-container">
+            <h2>Delete a Product</h2>
+            <form method="POST">
+                <label for="product_id">Product ID:</label>
+                <input type="number" id="product_id" name="product_id" required>
+
+                <button type="submit" name="delete_product">Delete Product</button>
             </form>
         </div>
 
